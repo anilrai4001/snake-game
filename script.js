@@ -20,10 +20,22 @@ function init(){
         drawSnake: function(){
 
             for(var i=0;i<this.cells.length;i++){
-                // pen.fillStyle = this.color;
+                pen.fillStyle = this.color;
                 pen.fillRect(this.cells[i].x * cs, this.cells[i].y * cs, cs-2, cs);
             }
 
+        },
+
+
+        updateSnake: function(){
+            console.log("updating snake");
+
+            this.cells.pop();
+            var headX = this.cells[0].x;
+            var headY = this.cells[0].y;
+            var X=headX+1;
+            var Y=headY;
+            this.cells.unshift({x:X, y:Y})
         }
     };
 
@@ -34,6 +46,7 @@ function init(){
 
 function draw(){
 
+    pen.clearRect(0,0,W,H);
     snake.drawSnake();
 
 
@@ -41,14 +54,14 @@ function draw(){
 
 function update(){
 
+
+    snake.updateSnake();
 }
 
 
 function gameloop(){
     draw();
     update();
-
-
 }
 
 

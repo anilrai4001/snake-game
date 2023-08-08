@@ -16,5 +16,6 @@ body{
 
 #mycanvas{
     background-color: #212837;
-    background-color: #ccc;
+    background-color: aqua;
+    border: 20px solid #ccc;
 } 
