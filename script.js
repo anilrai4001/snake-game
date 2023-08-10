@@ -1,104 +1,147 @@
-
 function init(){
     canvas = document.getElementById('mycanvas');
-    W = H = canvas.height = canvas.width = 1000;
+    W = H = canvas.width = canvas.height = 500;
     pen = canvas.getContext('2d');
-    cs = 67;
+    cell_size = 33;
+    food = getrandomfood();
+    game_over = false;
+    score = 0;
+
+    //Create a Image Object for food
+    food_img = new Image();
+    food_img.src = "apple.png";
+
+    //Create a Image Object for Score
+    trophy = new Image();
+    trophy.src = "trophy.png";
 
     snake = {
-        init_len : 5,
+        init_len: 4,
         color: "blue",
         cells: [],
         direction: "right",
-        
+
         createSnake: function(){
-            for( var i = this.init_len ; i>0 ; i--){
-                this.cells.push({x:i,y:0});
+            for (var i = this.init_len; i>0; i--){
+                this.cells.push({x:i, y:0});
             }
         },
-        
+
         drawSnake: function(){
-
-            for(var i=0;i<this.cells.length;i++){
+            for(var i=0; i<this.cells.length; i++){
                 pen.fillStyle = this.color;
-                pen.fillRect(this.cells[i].x * cs, this.cells[i].y * cs, cs-2, cs-2);
+                pen.fillRect(this.cells[i].x*cell_size, this.cells[i].y*cell_size, cell_size-2, cell_size-2);
             }
-
         },
-
 
         updateSnake: function(){
-            console.log("updating snake");
+            console.log("Updating Snake. ");
 
-            this.cells.pop();
             var headX = this.cells[0].x;
             var headY = this.cells[0].y;
-            var X,Y;
-            if(this.direction=='left'){
-                X=headX-1;
-                Y=headY;
+
+            if (headX == food.x && headY == food.y){
+                food = getrandomfood();
+                score += 1;
             }
-            else if(this.direction=='right'){
-                X=headX+1;
-                Y=headY;
-            }
-            else if(this.direction=='up'){
-                X=headX;
-                Y=headY-1;
-            }
-            else if(this.direction=='down'){
-                X=headX;
-                Y=headY+1;
+            else{
+                this.cells.pop();
             }
             
-            this.cells.unshift({x:X, y:Y})
+            var nextX, nextY;
 
-            
+            if (snake.direction == 'right'){
+                nextX = headX + 1;
+                nextY = headY;
+            }
+            else if (snake.direction == 'left'){
+                nextX = headX - 1;
+                nextY = headY;
+            }
+            else if (snake.direction == 'down'){
+                nextX = headX;
+                nextY = headY + 1;
+            }
+            else{
+                nextX = headX;
+                nextY = headY - 1;
+            }
 
+            this.cells.unshift({x:nextX, y:nextY});
+
+            /*Write a Logic that prevents snake from going out*/
+            var lastX = Math.round(W/cell_size);
+            var lastY = Math.round(H/cell_size);
+
+            if (this.cells[0].x > lastX || this.cells[0].y > lastY || 
+                this.cells[0].x < 0 || this.cells[0].y < 0){
+                game_over = true;
+            }
         }
     };
 
     snake.createSnake();
-
+    //Add a Event Listener on the Document Object
     function keyPressed(e){
-        var key = e.key;
-        if(key=='ArrowUp'){
-            snake.direction='up';
+        if (e.key == 'ArrowRight'){
+            snake.direction = 'right';
         }
-        else if(key=='ArrowDown'){
-            snake.direction='down';
+        else if (e.key == 'ArrowLeft'){
+            snake.direction = 'left';
         }
-        else if(key=='ArrowLeft'){
-            snake.direction='left';
+        else if (e.key == 'ArrowDown'){
+            snake.direction = 'down';
         }
-        else if(key=='ArrowRight'){
-            snake.direction='right';
+        else{
+            snake.direction = 'up';
         }
-        console.log(snake.direction);
     }
 
-
-
-    document.addEventListener('keydown',keyPressed);
+    document.addEventListener('keydown', keyPressed);
 }
 
-
 function draw(){
+    //erase the old frame
     pen.clearRect(0,0,W,H);
     snake.drawSnake();
+
+    // To display the food object/image
+    pen.fillStyle = food.color;
+    pen.drawImage(food_img, food.x*cell_size, food.y*cell_size, cell_size, cell_size);
+
+    // To display the Score 
+    pen.drawImage(trophy, 30, 30, cell_size*1.5, cell_size*1.5);
+    pen.fillStyle ="black";
+    pen.font = "25px Roboto";
+    pen.fillText(score, 48, 55);
 }
 
 function update(){
     snake.updateSnake();
 }
 
+function getrandomfood(){
+    var foodX = Math.round( Math.random()*(W-cell_size) / cell_size);
+    var foodY = Math.round( Math.random()*(H-cell_size) / cell_size);
+
+    var food = {
+        x: foodX,
+        y: foodY,
+        color: "red",
+    }
+
+    return food;
+}
 
 function gameloop(){
+    if (game_over == true){
+        clearInterval(f);
+        alert("Game Over");
+        return;
+    }
     draw();
     update();
 }
 
-
 init();
-
 var f = setInterval(gameloop, 100);

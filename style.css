@@ -1,21 +1,18 @@
-/* *{
-    margin:0;
-    padding:0;
+*{
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
-
 body{
-    width: 100vw;
     height: 100vh;
-    background-color: #E3F2FD;
+    width: 100vw;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-} */
-
-#mycanvas{
-    background-color: #212837;
-    background-color: aqua;
-    border: 20px solid #ccc;
-} 
+    background-color: black;
+}
+#mycanvas{	
+    background: #E3F2FD;
+    border:20px solid #007bd3;
+    
+}
